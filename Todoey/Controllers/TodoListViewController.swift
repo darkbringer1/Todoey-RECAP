@@ -9,51 +9,77 @@
 import UIKit
 
 class TodoListViewController: UITableViewController {
-    
-    var itemArray = ["Find Mike", "Buy Eggos", "Destroy Demogorgon"]
-    
+    var itemArray = [Item]()
+
     let defaults = UserDefaults.standard
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
-        if let items = defaults.array(forKey: "TodoListArray") as? [String] {
-            itemArray = items
-        }
+//        if let items = defaults.array(forKey: "TodoListArray") as? [String] {
+//            itemArray = items
+//        }
+        let newItem = Item()
+        newItem.title = "Find Mike"
+        itemArray.append(newItem)
+
+        let newItem2 = Item()
+        newItem2.title = "Buy Eggos"
+        itemArray.append(newItem2)
+
+        let newItem3 = Item()
+        newItem3.title = "Fight Demogorgon"
+        itemArray.append(newItem3)
     }
-    
-    //MARK: - TableView DataSource Methods
-    
+
+    // MARK: - TableView DataSource Methods
+
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return itemArray.count
     }
+
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "ToDoItemCell", for: indexPath)
-        cell.textLabel?.text = itemArray[indexPath.row]
+        let item = itemArray[indexPath.row]
+        cell.textLabel?.text = item.title
+
+        if item.done == true {
+            cell.accessoryType = .checkmark
+        } else {
+            cell.accessoryType = .none
+        }
+        
+
         return cell
     }
-    
-    //MARK: - TableView Delegate Methods
+
+    // MARK: - TableView Delegate Methods
+
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         //        print(itemArray[indexPath.row])
-        tableView.cellForRow(at: indexPath)?.accessoryType = .checkmark
-        
-        
-        //deselecting the selected row(removing the gray selection)
+
+        itemArray[indexPath.row].done = !itemArray[indexPath.row].done
+
+        // deselecting the selected row(removing the gray selection)
         tableView.deselectRow(at: indexPath, animated: true)
+        tableView.reloadData()
     }
-    //MARK: - Add New Items
-    
+
+    // MARK: - Add New Items
+
     @IBAction func addButtonPressed(_ sender: UIBarButtonItem) {
         var textField = UITextField()
-        
+
         let alert = UIAlertController(title: "Add New Todoey Item", message: "", preferredStyle: .alert)
-        let action = UIAlertAction(title: "Add Item", style: .default) { action in
-            //what will happen once the user clicks the Add New Todoey Item on our UIAlert
-            self.itemArray.append(textField.text!)
-            
+        let action = UIAlertAction(title: "Add Item", style: .default) { _ in
+            // what will happen once the user clicks the Add New Todoey Item on our UIAlert
+            let newItem = Item()
+            newItem.title = textField.text!
+
+            self.itemArray.append(newItem)
+
             self.defaults.set(self.itemArray, forKey: "TodoListArray")
-            
+
             self.tableView.reloadData()
         }
         alert.addTextField { alertTextField in
@@ -65,4 +91,4 @@ class TodoListViewController: UITableViewController {
     }
 }
 
-//singletons and a note about the next lesson has overviewed in 17.06.21 - 20.00
+// singletons and a note about the next lesson has overviewed in 17.06.21 - 20.00
