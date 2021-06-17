@@ -64,3 +64,5 @@ class TodoListViewController: UITableViewController {
         present(alert, animated: true, completion: nil)
     }
 }
+
+//singletons and a note about the next lesson has overviewed in 17.06.21 - 20.00
