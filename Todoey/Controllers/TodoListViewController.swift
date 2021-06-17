@@ -43,11 +43,10 @@ class TodoListViewController: UITableViewController {
         let item = itemArray[indexPath.row]
         cell.textLabel?.text = item.title
 
-        if item.done == true {
-            cell.accessoryType = .checkmark
-        } else {
-            cell.accessoryType = .none
-        }
+
+        //ternary operator refactored into code
+        cell.accessoryType = item.done ? .checkmark : .none
+            
         
 
         return cell
@@ -56,12 +55,14 @@ class TodoListViewController: UITableViewController {
     // MARK: - TableView Delegate Methods
 
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        //        print(itemArray[indexPath.row])
 
         itemArray[indexPath.row].done = !itemArray[indexPath.row].done
 
         // deselecting the selected row(removing the gray selection)
         tableView.deselectRow(at: indexPath, animated: true)
+        
+        
+        
         tableView.reloadData()
     }
 
@@ -72,8 +73,11 @@ class TodoListViewController: UITableViewController {
 
         let alert = UIAlertController(title: "Add New Todoey Item", message: "", preferredStyle: .alert)
         let action = UIAlertAction(title: "Add Item", style: .default) { _ in
+            
             // what will happen once the user clicks the Add New Todoey Item on our UIAlert
+            
             let newItem = Item()
+            
             newItem.title = textField.text!
 
             self.itemArray.append(newItem)
