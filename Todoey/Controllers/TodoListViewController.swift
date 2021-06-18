@@ -9,13 +9,18 @@
 import UIKit
 
 class TodoListViewController: UITableViewController {
+    
     var itemArray = [Item]()
+    let dataFilePath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first?.appendingPathComponent("Items.plist")
 
-    let defaults = UserDefaults.standard
+    
 
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
+        
+        print(dataFilePath)
+        
         let newItem = Item()
         newItem.title = "Find Mike"
         itemArray.append(newItem)
@@ -29,9 +34,9 @@ class TodoListViewController: UITableViewController {
         itemArray.append(newItem3)
         
         
-        if let items = defaults.array(forKey: "TodoListArray") as? [Item] {
-            itemArray = items
-        }
+//        if let items = defaults.array(forKey: "TodoListArray") as? [Item] {
+//            itemArray = items
+//        }
     }
 
     // MARK: - TableView DataSource Methods
@@ -63,9 +68,7 @@ class TodoListViewController: UITableViewController {
         // deselecting the selected row(removing the gray selection)
         tableView.deselectRow(at: indexPath, animated: true)
         
-        
-        
-        tableView.reloadData()
+        saveItems()
     }
 
     // MARK: - Add New Items
@@ -83,11 +86,8 @@ class TodoListViewController: UITableViewController {
             newItem.title = textField.text!
 
             self.itemArray.append(newItem)
-
-            self.defaults.set(self.itemArray, forKey: "TodoListArray")
-
+            self.saveItems()
             
-            self.tableView.reloadData()
         }
         alert.addTextField { alertTextField in
             alertTextField.placeholder = "Create new item"
@@ -96,7 +96,21 @@ class TodoListViewController: UITableViewController {
         alert.addAction(action)
         present(alert, animated: true, completion: nil)
     }
+    //MARK: - Model Manipulation Methods
+    
+    func saveItems() {
+        let encoder = PropertyListEncoder()
+        do {
+            let data = try encoder.encode(self.itemArray)
+            try data.write(to: self.dataFilePath!)
+            
+        } catch {
+            print("Error encoding item array, \(error)")
+        }
+        self.tableView.reloadData()
+    }
+
 }
 
 // singletons and a note about the next lesson has overviewed in 17.06.21 - 20.00
-// The concept of iOS Sandboxing explained
+// The concept of iOS Sandboxing explained 17.06.21 - 21.00
