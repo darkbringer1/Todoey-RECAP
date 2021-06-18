@@ -118,3 +118,4 @@ class TodoListViewController: UITableViewController {
 
 // singletons and a note about the next lesson has overviewed in 17.06.21 - 20.00
 // The concept of iOS Sandboxing explained 17.06.21 - 21.00
+// Introduction to Databases
